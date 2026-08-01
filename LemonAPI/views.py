@@ -2,10 +2,11 @@ from django.shortcuts import render
 from . import models
 from . import serializers
 from . import filters
-from .permissions import IsManagerOrReadOnly, IsManagerOrAdmin
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 
@@ -13,7 +14,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class CategoriesView(generics.ListCreateAPIView):
     queryset = models.Category.objects.all()
     serializer_class = serializers.CategorySerializer
-    permission_classes = [IsManagerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = []
 
@@ -21,7 +22,7 @@ class CategoriesView(generics.ListCreateAPIView):
 class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Category.objects.all()
     serializer_class = serializers.CategorySerializer
-    permission_classes = [IsManagerOrAdmin]
+    permission_classes = [IsAuthenticated]
 
     filter_backends = []
 
@@ -29,7 +30,7 @@ class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
 class MenuItemsView(generics.ListCreateAPIView):
     queryset = models.MenuItem.objects.all().order_by('featured', '-id')
     serializer_class = serializers.MenuItemSerializer
-    permission_classes = [IsManagerOrAdmin]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [OrderingFilter, SearchFilter, DjangoFilterBackend]
 
@@ -41,6 +42,16 @@ class MenuItemsView(generics.ListCreateAPIView):
 class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.MenuItem.objects.all()
     serializer_class = serializers.MenuItemSerializer
-    permission_classes = [IsManagerOrAdmin]
+    permission_classes = [IsAuthenticated]
 
     filter_backends = []
+
+
+class CartView(generics.ListAPIView):
+    queryset = models.Cart.objects.all()
+    serializer_class = serializers.CartSerialier
+
+
+class OrderView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Order.objects.all().order_by('-id')
+    serializer_class = serializers.OrderSerializer

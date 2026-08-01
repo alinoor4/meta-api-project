@@ -14,7 +14,6 @@ class CategorySerializer(serializers.ModelSerializer):
 class MenuItemSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     category_id = serializers.IntegerField(write_only=True, min_value=1)
-    ordering_fields = ['price',]
 
     class Meta:
         model = models.MenuItem
@@ -23,3 +22,15 @@ class MenuItemSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id': {'read_only': True},
         }
+
+
+class CartSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = models.Cart
+        fields = ['menuitem', 'quantity', 'unit_price', 'price']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Order
+        fields = ['delivery_crew', 'status', 'total', 'date']

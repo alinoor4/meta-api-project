@@ -1,0 +1,8 @@
+admin
+12345
+
+manager
+m@n@ger123
+
+customer
+123@CusT
