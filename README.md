@@ -1,8 +1,6 @@
 # Little Lemon Restaurant API
 
-A fully functional RESTful back-end API for the **Little Lemon** restaurant, built as the final project for the **APIs course** in the [Meta Back-End Developer Professional Certificate](https://www.coursera.org/professional-certificates/meta-back-end-developer).
-
-The API powers menu and category management, customer carts, and role-based user groups — all secured with token authentication.
+A fully functional RESTful back-end API for the **Little Lemon** restaurant. The API powers menu and category management, customer carts, and role-based user groups — all secured with token authentication.
 
 ---
 
@@ -42,8 +40,8 @@ The API powers menu and category management, customer carts, and role-based user
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/alinoor4/meta-api-project.git
-cd meta-api-project
+git clone https://github.com/alinoor4/little-lemon-restaurant-api.git
+cd little-lemon-restaurant-api
 
 # 2. Install dependencies & activate the virtual environment
 pipenv install
@@ -76,7 +74,7 @@ Authentication is handled by **Djoser** under the `/auth/` prefix.
 
 Include the token on protected requests:
 
-```
+```http
 Authorization: Token <your-token>
 ```
 
@@ -133,7 +131,7 @@ All application endpoints live under the `/api/` prefix.
 
 **Example:**
 
-```
+```http
 GET /api/menu-items?category=main&ordering=-price&page=1
 ```
 
@@ -142,7 +140,7 @@ GET /api/menu-items?category=main&ordering=-price&page=1
 ## Project Structure
 
 ```
-meta-api-project/
+little-lemon-restaurant-api/
 ├── LittleLemonAPI/     # Project config — settings, root URLconf, WSGI/ASGI
 ├── LemonAPI/           # Core app — models, views, serializers, filters
 │   ├── models.py       # Category, MenuItem, Cart, Order, OrderItem
@@ -154,6 +152,8 @@ meta-api-project/
 ├── Pipfile
 └── Pipfile.lock
 ```
+
+---
 
 ## Acknowledgments
 
