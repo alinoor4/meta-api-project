@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from . import models
+from .models import *
+from django.contrib.auth.models import Group
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Category
+        model = Category
         fields = ['id', 'title',]
         extra_kwargs = {
             'id': {'read_only': True}
@@ -16,7 +17,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(write_only=True, min_value=1)
 
     class Meta:
-        model = models.MenuItem
+        model = MenuItem
         fields = ['id', 'title', 'price',
                   'featured', 'category', 'category_id']
         extra_kwargs = {
@@ -26,11 +27,23 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
 class CartSerialier(serializers.ModelSerializer):
     class Meta:
-        model = models.Cart
+        model = Cart
         fields = ['menuitem', 'quantity', 'unit_price', 'price']
 
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Order
+        model = Order
         fields = ['delivery_crew', 'status', 'total', 'date']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    groups = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=Group.objects.all(),
+    )
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'groups']
