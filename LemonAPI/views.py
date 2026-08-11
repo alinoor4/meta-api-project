@@ -1,17 +1,18 @@
-from django.shortcuts import render
 from .models import *
-from . import serializers
-from . import filters
+from .serializers import *
+from .filters import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
+from rest_framework.response import Response
 # Create your views here.
 
 
 class CategoriesView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
-    serializer_class = serializers.CategorySerializer
+    serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = []
@@ -19,7 +20,7 @@ class CategoriesView(generics.ListCreateAPIView):
 
 class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
-    serializer_class = serializers.CategorySerializer
+    serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 
     filter_backends = []
@@ -27,36 +28,52 @@ class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
 
 class MenuItemsView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all().order_by('featured', '-id')
-    serializer_class = serializers.MenuItemSerializer
+    serializer_class = MenuItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [OrderingFilter, SearchFilter, DjangoFilterBackend]
 
     ordering_fields = ['price', 'category__price']
     search_fields = ['title', 'category__title']
-    filterset_class = filters.MenuItemFilter
+    filterset_class = MenuItemFilter
 
 
 class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
-    serializer_class = serializers.MenuItemSerializer
+    serializer_class = MenuItemSerializer
     permission_classes = [IsAuthenticated]
 
     filter_backends = []
 
 
-class CartView(generics.ListAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = serializers.CartSerialier
+class CartView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        cart_items = Cart.objects.filter(user=request.user)
+        serializer = CartSerializer(cart_items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = CartSerializer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        Cart.objects.filter(user=request.user).delete()
+        return Response({'message': 'Cart cleared'}, status=status.HTTP_200_OK)
 
 
 class OrderView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all().order_by('-id')
-    serializer_class = serializers.OrderSerializer
+    serializer_class = OrderSerializer
 
 
 class UsersByGroupView(generics.ListCreateAPIView):
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -65,7 +82,7 @@ class UsersByGroupView(generics.ListCreateAPIView):
 
 
 class SingleUserByGroupView(generics.DestroyAPIView):
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
