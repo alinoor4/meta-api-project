@@ -16,7 +16,6 @@ class MenuItemSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all()
     )
     # category = CategorySerializer(read_only=True)
-
     class Meta:
         model = MenuItem
         fields = ['id', 'title', 'price', 'category', 'featured']
@@ -27,6 +26,7 @@ class CartSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()
     )
+
 
     def validate(self, attrs):
         attrs['price'] = attrs['quantity'] * attrs['unit_price']
@@ -59,4 +59,4 @@ class OrderSerializer(serializers.ModelSerializer):
 class UserSerilializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id','username','email']
