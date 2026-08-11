@@ -155,16 +155,6 @@ meta-api-project/
 └── Pipfile.lock
 ```
 
----
-
-## Roadmap
-
-- [ ] Wire up order placement endpoints (`Order` / `OrderItem` models and `OrderView` are already in place)
-- [ ] Role-specific permission classes for `Manager` and `Delivery crew`
-- [ ] API throttling for anonymous and authenticated users
-
----
-
 ## Acknowledgments
 
 Built as part of the **APIs** course in the Meta Back-End Developer Professional Certificate on Coursera. The Little Lemon restaurant is Meta's fictional brand used throughout the program.
